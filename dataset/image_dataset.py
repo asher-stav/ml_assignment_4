@@ -6,7 +6,7 @@ import pandas as pd
 from pathlib import Path
 
 
-images_path = Path('/data/jpg/')
+images_path = Path('data/jpg/')
 TRAIN_LABELS_PATH = Path('data/trainlabels.csv')
 VAL_LABELS_PATH = Path('data/vallabels.csv')
 TEST_LABELS_PATH = Path('data/testlabels.csv')
@@ -26,6 +26,8 @@ class ImagesDataset(Dataset):
         img = read_image(images_path / img_filename).to(torch.float32) / 255.0
         if self.transform:
             img = self.transform(img)
+        
+        label -= 1
 
         return img, label
 

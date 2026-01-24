@@ -9,9 +9,11 @@ import torch
 ## ==============================================================================
 
 __builders_config = {
-    'num_of_classes': 10,
+    'num_of_classes': 102,
     'device': torch.device("cuda" if torch.cuda.is_available() else "cpu"),
-    'freeze': False
+    'freeze': False,
+    'epochs': 1,
+    'batch_size': 32
 }
 
 ## ==============================================================================
@@ -30,7 +32,7 @@ __adam_config = {
 
 CONFIG = {
     # determines if logs will be printed
-    'debug': False,
+    'debug': True,
 
     # i don't like the key name
     'builders_config': __builders_config,

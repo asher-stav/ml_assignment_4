@@ -47,6 +47,7 @@ def split_train_val_test():
 
 
 def main():
+    global data_path
     data_path = Path('../data/')
     labels_to_csv()
     extract_images()
