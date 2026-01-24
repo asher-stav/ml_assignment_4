@@ -3,14 +3,10 @@ import pandas as pd
 import numpy as np
 from pathlib import Path
 import tarfile
-
-data_path = Path('../data')
-
-# Converting labels to csv
+from sklearn.model_selection import train_test_split
 
 
-# Extracting images
-
+data_path = Path('data')
 
 
 def labels_to_csv():
@@ -23,7 +19,7 @@ def labels_to_csv():
     labels = mat_data['labels'].flatten()
 
     df = pd.DataFrame({
-        "image_id": np.arange(len(labels)),
+        "image_id": np.arange(1, len(labels) + 1),
         "label": labels
     })
 
@@ -39,9 +35,23 @@ def extract_images():
     images_archive.close()
 
 
+def split_train_val_test():
+    print('\nSplitting data to train-validation-test...')
+    df = pd.read_csv(data_path / 'imagelabels.csv')
+    temp_df, test_df = train_test_split(df, test_size=0.25)
+    train_df, val_df = train_test_split(temp_df, test_size=(1 / 3))
+
+    train_df.to_csv(data_path / 'trainlabels.csv', index=False)
+    val_df.to_csv(data_path / 'vallabels.csv', index=False)
+    test_df.to_csv(data_path / 'testlabels.csv', index=False)
+
+
 def main():
+    data_path = Path('../data/')
     labels_to_csv()
     extract_images()
+    split_train_val_test()
+
 
 if __name__ == '__main__':
     main()

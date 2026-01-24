@@ -6,7 +6,10 @@ import pandas as pd
 from pathlib import Path
 
 
-images_path = Path('../data/jpg/')
+images_path = Path('/data/jpg/')
+TRAIN_LABELS_PATH = Path('data/trainlabels.csv')
+VAL_LABELS_PATH = Path('data/vallabels.csv')
+TEST_LABELS_PATH = Path('data/testlabels.csv')
 
 
 class ImagesDataset(Dataset):
@@ -37,6 +40,7 @@ yolov5_transform = transforms.Compose([
 
 
 if __name__ == '__main__':
+    images_path = Path('../data/jpg/')
     # Testing re-sizing works
     print('Without Resize')
     f = ImagesDataset('../data/imagelabels.csv')
