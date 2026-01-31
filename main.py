@@ -65,12 +65,12 @@ def save_results(results, filename):
     results_dir = Path('results')
     results_dir.mkdir(exist_ok=True)
 
-    with open(results_dir / filename) as file:
+    with open(results_dir / filename, 'wb') as file:
         pickle.dump(results, file)
 
 
 def evaluate_vgg19(num_classes, device, freeze):
-    log(f'\n{10 * "-"} Evaluating VGG19 {10 * "-"}')
+    log(f'\n--------  Evaluating VGG19 -------- ')
     vgg19 = finetune.build_vgg19(num_classes, device, free_features=freeze)
     transform = image_dataset.vgg19_transform
 
@@ -88,7 +88,7 @@ def evaluate_vgg19(num_classes, device, freeze):
 
 
 def evaluate_yolov5(num_classes, device, freeze):
-    log(f'\n{10 * "-"} Evaluating YOLOv5 {10 * "-"}')
+    log('-------- Evaluating YOLOv5 --------')
     yolov5 = finetune.build_yolo_v5(num_classes, device, free_features=freeze)
     transform = image_dataset.yolov5_transform
 
