@@ -1,5 +1,5 @@
 from datetime import datetime
-from rich import inspect
+import inspect
 from global_config import CONFIG
 
 
