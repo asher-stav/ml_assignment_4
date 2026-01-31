@@ -41,5 +41,7 @@ CONFIG = {
     'optimizer': __adam_config,
     
     # Criterion name
-    'criterion': 'CrossEntropyLoss'
+    'criterion': 'CrossEntropyLoss',
+
+    'random_seed': 1
 }
