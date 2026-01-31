@@ -34,10 +34,12 @@ class ImagesDataset(Dataset):
 
 vgg19_transform = transforms.Compose([
     transforms.Resize((224, 224)),
+    transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225])
 ])
 
 yolov5_transform = transforms.Compose([
     transforms.Resize((640, 640)),
+    transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225])
 ])
 
 
