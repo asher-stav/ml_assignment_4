@@ -1,6 +1,6 @@
 
 import torch
-from utils import log
+from finetune_utils import log
 
 
 def test_model(model, dataloader, criterion, device):

@@ -1,6 +1,6 @@
 import torch
 import torchvision.models as models
-from utils import log
+from finetune_utils import log
 
 
 def train_epoch(model, dataloader, optimizer, criterion, device):
@@ -86,24 +86,47 @@ def build_vgg19(num_classes, device, free_features=False):
     return model
 
 
+class YOLOv5Classifier(torch.nn.Module):
+    def __init__(self, device, num_classes, free_features):
+        super().__init__()
+        self.device = device
+        self.yolo = torch.hub.load('ultralytics/yolov5', 'yolov5s', 
+                           pretrained=True, autoshape=False)
+        self.yolo.to(device)
+        self.yolo.eval()
+    
+        if free_features:
+            for param in self.yolo.model.parameters():
+                param.requires_grad = False
+
+        # Hook pre-last layer to get its features before the detection
+        self.features = None
+        def hook(module, input, output):
+            self.features = output
+        self.yolo.model.model[-2].register_forward_hook(hook)
+
+        # Create pool to prepare features for classification
+        self.pool = torch.nn.AdaptiveAvgPool2d(1)
+        
+        in_features = 512
+        self.classifier = torch.nn.Linear(in_features, num_classes)
+    
+    def forward(self, x):
+        _ = self.yolo(x)
+        x = self.features
+        x = self.pool(x).flatten(1)
+        x = self.classifier(x)
+        return x
+
+
 def build_yolo_v5(num_classes, device, free_features=False):
     """
     Replaces the last layer of YOLOv5 & updates the device.
     Returns: model
     """
-    model = torch.hub.load('ultralytics/yolov5', 'yolov5s', pretrained=True)
-    
-    if free_features:
-        for param in model.model.parameters():
-            param.requires_grad = False
-            
-    in_features = model.model[-1].m.in_channels
-    model.model[-1].m = torch.nn.Linear(in_features, num_classes)
+    model = YOLOv5Classifier(device, num_classes, free_features)
 
-    log(f'YOLOv5 Last layer replaced with:           {model.model[-1].m.__class__.__name__}')
-    log(f'      Number of in features (last layer): {in_features}')
-    log(f'      Number of classes:                  {num_classes}')
-
+    log(f'YOLOv5 created with {num_classes} Classes')
     model.to(device)
     
     return model

@@ -4,7 +4,7 @@ Factory functions for criterion and optimizer to be produced according to the co
 
 import torch
 from global_config import CONFIG as cfg
-from utils import log
+from finetune_utils import log
 
 def criterion_factory():
     criterion_name = cfg['criterion']

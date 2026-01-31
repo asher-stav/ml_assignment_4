@@ -6,7 +6,7 @@ import numpy as np
 import random
 
 from global_config import CONFIG as cfg
-from utils import log
+from finetune_utils import log
 import dataset.preprocessing as preprocessing
 import dataset.image_dataset as image_dataset
 import factories
