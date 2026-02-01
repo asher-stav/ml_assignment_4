@@ -12,7 +12,7 @@ __builders_config = {
     'num_of_classes': 102,
     'device': torch.device("cuda" if torch.cuda.is_available() else "cpu"),
     'freeze': True,
-    'epochs': 3,
+    'epochs': 10,
     'batch_size': 32
 }
 

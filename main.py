@@ -140,7 +140,7 @@ def main():
     freeze = builders_cfg['freeze']
 
     evaluate_vgg19(num_classes, device, freeze)
-    # evaluate_yolov5(num_classes, device, freeze)
+    evaluate_yolov5(num_classes, device, freeze)
 
 
 if __name__ == '__main__':
