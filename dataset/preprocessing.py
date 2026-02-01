@@ -4,6 +4,7 @@ import numpy as np
 from pathlib import Path
 import tarfile
 from sklearn.model_selection import train_test_split
+from global_config import CONFIG as cfg
 
 
 data_path = Path('data')
@@ -38,8 +39,8 @@ def extract_images():
 def split_train_val_test():
     print('\nSplitting data to train-validation-test...')
     df = pd.read_csv(data_path / 'imagelabels.csv')
-    temp_df, test_df = train_test_split(df, test_size=0.25)
-    train_df, val_df = train_test_split(temp_df, test_size=(1 / 3))
+    temp_df, test_df = train_test_split(df, test_size=0.25, stratify=df['label'], random_state=cfg['random_seed'])
+    train_df, val_df = train_test_split(temp_df, test_size=(1 / 3), stratify=temp_df['label'], random_state=cfg['random_seed'])
 
     train_df.to_csv(data_path / 'trainlabels.csv', index=False)
     val_df.to_csv(data_path / 'vallabels.csv', index=False)
