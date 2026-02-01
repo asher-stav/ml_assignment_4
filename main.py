@@ -23,8 +23,8 @@ def get_dataloaders(transform, batch_size):
                                                 transform=transform)
     
     train_loader = DataLoader(train_dataset, batch_size=batch_size, shuffle=True)
-    val_loader = DataLoader(val_dataset, batch_size=batch_size, shuffle=True)
-    test_loader = DataLoader(test_dataset, batch_size=batch_size, shuffle=True)
+    val_loader = DataLoader(val_dataset, batch_size=batch_size)
+    test_loader = DataLoader(test_dataset, batch_size=batch_size)
 
     return train_loader, val_loader, test_loader
 
@@ -41,7 +41,9 @@ def evaluate_model(model, transform, criterion):
     
     train_loss = []
     train_accuracies = []
+    validation_loss = []
     validation_accuracies = []
+    test_loss = []
     test_accuracies = []
 
     log('Training...')
@@ -52,13 +54,16 @@ def evaluate_model(model, transform, criterion):
         train_loss.append(epoch_loss)
         train_accuracies.append(train_acc)
 
-        val_acc = finetune.validate(model, val_loader, criterion, device)
+        val_loss, val_acc = finetune.validate(model, val_loader, criterion, device)
+        validation_loss.append(val_loss)
         validation_accuracies.append(val_acc)
 
-        test_accuracy = test.test_model(model, test_loader, criterion, device)
+        test_loss_val, test_accuracy = test.test_model(model, test_loader, criterion, device)
+        test_loss.append(test_loss_val)
         test_accuracies.append(test_accuracy)
     
-    return train_loss, train_accuracies, validation_accuracies, test_accuracies
+    return train_loss, train_accuracies, validation_loss, \
+        validation_accuracies, test_loss, test_accuracies
 
 
 def save_results(results, filename):
@@ -76,11 +81,13 @@ def evaluate_vgg19(num_classes, device, freeze):
 
     criterion = factories.criterion_factory()
     
-    train_loss, train_accuracies, validation_accuracies, test_accuracies = evaluate_model(vgg19, transform, criterion)
+    train_loss, train_accuracies, validation_loss, validation_accuracies, test_loss, test_accuracies = evaluate_model(vgg19, transform, criterion)
     results = {
         'train_loss': train_loss,
         'train_accuracies': train_accuracies,
+        'validation_loss': validation_loss,
         'validation_accuracies': validation_accuracies,
+        'test_loss': test_loss,
         'test_accuracies': test_accuracies
     }
 
@@ -94,11 +101,13 @@ def evaluate_yolov5(num_classes, device, freeze):
 
     criterion = factories.criterion_factory()
     
-    train_loss, train_accuracies, validation_accuracies, test_accuracies = evaluate_model(yolov5, transform, criterion)
+    train_loss, train_accuracies, validation_loss, validation_accuracies, test_loss, test_accuracies = evaluate_model(yolov5, transform, criterion)
     results = {
         'train_loss': train_loss,
         'train_accuracies': train_accuracies,
+        'validation_loss': validation_loss,
         'validation_accuracies': validation_accuracies,
+        'test_loss': test_loss,
         'test_accuracies': test_accuracies
     }
 
@@ -131,7 +140,7 @@ def main():
     freeze = builders_cfg['freeze']
 
     evaluate_vgg19(num_classes, device, freeze)
-    evaluate_yolov5(num_classes, device, freeze)
+    # evaluate_yolov5(num_classes, device, freeze)
 
 
 if __name__ == '__main__':

@@ -11,7 +11,7 @@ import torch
 __builders_config = {
     'num_of_classes': 102,
     'device': torch.device("cuda" if torch.cuda.is_available() else "cpu"),
-    'freeze': False,
+    'freeze': True,
     'epochs': 10,
     'batch_size': 32
 }
@@ -22,7 +22,8 @@ __builders_config = {
 
 __adam_config = {
     'name': 'Adam',
-    'lr': 0.001,
+    'lr': 3e-4,
+    'decay': 1e-4,
 }
 
 

@@ -29,9 +29,10 @@ def optimizer_factory(model):
     # Add more optimizers here
     if optimizer_name == 'Adam':
         lr = optimizer_cfg['lr']
+        decay = optimizer_cfg['decay']
         return torch.optim.Adam(
             filter(lambda p: p.requires_grad, model.parameters()),
-            lr=lr)
+            lr=lr, weight_decay=decay)
         
     log(f'Optimizer: {optimizer_name} is configured in the config file, but is not implemented in the optimizer factory')
     
