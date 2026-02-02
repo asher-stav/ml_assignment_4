@@ -3,6 +3,7 @@ import matplotlib
 import matplotlib.pyplot as plt
 import os
 from typing import List, Tuple
+import pickle
 
 # needed for some reason
 matplotlib.use('Agg') 
@@ -34,24 +35,41 @@ def value_graph_over_epochs(model_name, value, data: List[Tuple[float, float, fl
     file_name = f"{model_name}_{value}_over_epochs_{timestamp}.png"
     __save_file(fig, file_name.replace(" ", "_"))
 
-
-def loss_graph_over_epochs(model_name, loss):
-    epochs = list(range(1, len(loss) + 1))
-    
-    fig, ax = plt.subplots(figsize=(8,5))
-    ax.plot(epochs, loss, label='Train Loss')
-    ax.set_xlabel('Epoch')
-    ax.set_ylabel('Loss')
-    ax.set_title(f'Train Loss over Epochs for {model_name}')
-    ax.grid(True)
-    ax.legend()
-    
-    timestamp = dt.datetime.now().strftime("%Y%m%d_%H%M%S")
-    file_name = f"{model_name}_loss_over_epochs_{timestamp}.png"
-    __save_file(fig, file_name.replace(" ", "_"))
-
     
 def __save_file(fig, file_name):
     os.makedirs(__result_dir, exist_ok=True)
     fig.savefig(os.path.join(__result_dir, file_name), dpi=300, format='png', bbox_inches='tight')
     plt.close(fig)
+
+
+def main():
+    with open('results/vgg19.pkl', 'rb') as f:
+        vgg19_results = pickle.load(f)
+    
+    train_loss = vgg19_results['train_loss']
+    validation_loss = vgg19_results['validation_loss']
+    test_loss = vgg19_results['test_loss']
+    value_graph_over_epochs("VGG19", "Loss", list(zip(train_loss, validation_loss, test_loss)))
+
+    train_accuracies = vgg19_results['train_accuracies']
+    validation_accuracies = vgg19_results['validation_accuracies']
+    test_accuracies = vgg19_results['test_accuracies']
+    value_graph_over_epochs("VGG19", "Accuracy", list(zip(train_accuracies, validation_accuracies, test_accuracies)))
+    
+    
+    with open('results/yolov5.pkl', 'rb') as f:
+        yolov5_results = pickle.load(f)
+    
+    train_loss = yolov5_results['train_loss']
+    validation_loss = yolov5_results['validation_loss']
+    test_loss = yolov5_results['test_loss']
+    value_graph_over_epochs("YOLOv5", "Loss", list(zip(train_loss, validation_loss, test_loss)))
+
+    train_accuracies = yolov5_results['train_accuracies']
+    validation_accuracies = yolov5_results['validation_accuracies']
+    test_accuracies = yolov5_results['test_accuracies']
+    value_graph_over_epochs("YOLOv5", "Accuracy", list(zip(train_accuracies, validation_accuracies, test_accuracies)))
+
+
+if __name__ == "__main__":
+    main()
